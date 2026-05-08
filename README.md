@@ -1,73 +1,64 @@
-# React + TypeScript + Vite
+# react-component-library
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Demo app** for a React component library. This Vite + React project is the playground where you render, iterate on, and smoke-test components under real browser conditions—not the published package itself (that would be built and shipped separately).
 
-Currently, two official plugins are available:
+Right now `src/App.tsx` is still the stock Vite welcome screen (counter, hero, doc links). As you add library pieces, compose them here or split routes/sections so the demo stays easy to browse.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- [React](https://react.dev/) 19
+- [Vite](https://vite.dev/) 8 with [`@vitejs/plugin-react`](https://github/vitejs/vite-plugin-react)
+- TypeScript (project refs: `tsconfig.app.json`, `tsconfig.node.json`)
+- [ESLint](https://eslint.org/) 10 with [`typescript-eslint`](https://typescript-eslint.io/) and React hooks / refresh plugins (`eslint.config.js`)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js (LTS recommended)
+- npm (lockfile is `package-lock.json`)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Scripts
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| Command           | Description                                     |
+|-------------------|-------------------------------------------------|
+| `npm run dev`     | Start the demo dev server with HMR              |
+| `npm run build`   | Type-check (`tsc -b`) then production build     |
+| `npm run preview` | Serve `dist/` (check the demo build locally)    |
+| `npm run lint`    | Run ESLint                                      |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Project layout
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+index.html              # Demo entry (loads /src/main.tsx)
+public/                 # Static assets for the demo
+src/
+  main.tsx              # React root
+  App.tsx               # Demo shell — compose/showcase components here
+  App.css, index.css    # Global / demo styling
+  assets/               # Demo images and similar
+vite.config.ts
+eslint.config.js
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Treat **`src/App.tsx` (and future demo-only pages)** as throwaway glue. Put reusable UI in something like **`src/components/`** or **`src/lib/`** so it stays separable from the demo.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Run the demo locally
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+Edit components and the demo; Vite applies hot updates in the browser.
+
+## Demo build
+
+```bash
+npm run build
+npm run preview
+```
+
+Artifacts land in **`dist/`** — that is the built **demo site**, not an npm-ready library bundle.
+
+## Shipping a consumable library
+
+Publishing is not wired up yet. When you’re ready: expose components from an entry module, add types, and use Vite [library mode](https://vite.dev/guide/build.html#library-mode) or a bundler like [tsup](https://github.com/egoist/tsup) so consumers get a proper package; keep this Vite app as the **demo** or move it to a `examples/` / `docs/` app if you split the repo.
